@@ -1,6 +1,8 @@
+// "use client"
 import Image from "next/image";
 import Link from "next/link";
 import { auth, signOut, signIn } from "../auth";
+import { redirect } from "next/dist/server/api-utils";
 
 const Navbar = async () => {
   const session = await auth();
@@ -17,24 +19,27 @@ const Navbar = async () => {
                 <span>Create</span>
               </Link>
 
-              <button
-                onClick={() => {
-                  signOut;
+              <form
+                action={async () => {
+                  "use server";
+                  await signOut({ redirectTo: "/" });
                 }}
               >
-                <span>Log Out </span>
-              </button>
-
-              <Link href={`/user/${session}`}>
+               <button type="submit">Sign Out</button>
+              </form>
+{/* 
+              <Link href={`/user/${session?.user}`}>
                 <span>{session?.user?.name}</span>
-              </Link>
+              </Link> */}
             </>
           ) : (
-            <form action={async()=>{
-              "use server";
-        
-            }}>
-              <button type="submit">Login</button>
+            <form
+              action={async () => {
+                "use server";
+                await signIn("google");
+              }}
+            >
+              <button type="submit">Sign In with Google</button>
             </form>
           )}
         </div>
